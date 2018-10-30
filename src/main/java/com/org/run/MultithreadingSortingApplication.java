@@ -1,4 +1,4 @@
-package com.sorting.run;
+package com.org.run;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
