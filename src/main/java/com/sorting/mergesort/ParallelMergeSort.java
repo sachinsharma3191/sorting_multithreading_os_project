@@ -1,4 +1,4 @@
-package com.sorting.mergersort;
+package com.sorting.mergesort;
 
 import java.util.*;
 
