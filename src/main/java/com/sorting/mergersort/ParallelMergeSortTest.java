@@ -19,7 +19,7 @@ public class ParallelMergeSortTest {
 	 * the array afterwards to ensure correct sorting
 	 */
 	public static void runSortTester() {
-		long SIZE = 1000000L, // initial length of array to sort
+		long SIZE = 100000000L, // initial length of array to sort
 				ROUNDS = 2, availableThreads = (Runtime.getRuntime().availableProcessors()) * 2;
 
 		System.out.println(Runtime.getRuntime().availableProcessors());

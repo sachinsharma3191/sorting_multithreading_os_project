@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 
-import com.sorting.mergersort.ParallelMergeSort;
 
 public class ParallelQuickSorterTest {
 

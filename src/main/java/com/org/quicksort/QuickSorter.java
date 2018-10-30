@@ -59,7 +59,7 @@ class QuickSorter implements Runnable {
 			// System.out.println(i);
 		}
 		System.out.println("\n");
-		int n = 100000;
+		int n = 100000000;
 		data = randomList(n, 1000000);
 		int s = partition(data, 0, n - 1);
 		long startTime = System.currentTimeMillis();
@@ -75,6 +75,6 @@ class QuickSorter implements Runnable {
 		}
 		long endTime = System.currentTimeMillis();
 		System.out.println("Total time to executeion:" + (endTime - startTime));
-		System.out.println(Arrays.toString(data));
+
 	}
 }
