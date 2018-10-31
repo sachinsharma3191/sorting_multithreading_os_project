@@ -34,7 +34,7 @@ public class MergeSortForkJoin {
 
 		@Override
 		protected void compute() {
-			if (high - low <= THRESHOLD) {
+			if (serialThresholdMet()) {
 				Arrays.sort(array, low, high);
 			} else {
 				int middle = low + ((high - low) >> 1);
@@ -68,6 +68,10 @@ public class MergeSortForkJoin {
 				}
 			}
 		}
+
+		private boolean serialThresholdMet() {
+			return high - low < 1000000000;
+		}
 	}
 
 	/**
@@ -80,7 +84,6 @@ public class MergeSortForkJoin {
 		pool = new ForkJoinPool(parallelism);
 	}
 
-	
 	/**
 	 * Sorts all the elements of the given array using the ForkJoin framework
 	 * 
@@ -90,7 +93,7 @@ public class MergeSortForkJoin {
 		ForkJoinTask<Void> job = pool.submit(new MergeSortTask(array, 0, array.length));
 		job.join();
 	}
-	
+
 	protected void finalize() {
 		pool.shutdown();
 	}
