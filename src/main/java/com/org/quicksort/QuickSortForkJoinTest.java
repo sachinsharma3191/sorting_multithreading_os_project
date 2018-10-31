@@ -1,12 +1,11 @@
 package com.thread.quicksort;
 
 import java.util.Random;
-
-import com.thread.mergesort.MergeSortForkJoin;
+import java.util.concurrent.ForkJoinPool;
 
 public class QuickSortForkJoinTest {
 
-	public static void runSort(int limit) {
+	public static void runSort(int limit,int poolSize ) {
 		System.out.println("***************Quick Sort running time***********");
 		for (int i = 0; i < limit; i++) {
 			int power = (int) Math.round(Math.pow(2, i));
@@ -18,7 +17,7 @@ public class QuickSortForkJoinTest {
 			System.out.println("**********************************************");
 			System.out.print("Sorting Time for " + power + " elements ");
 			long start = System.nanoTime();
-			new MergeSortForkJoin(1000).sort(array);
+			new QuickSortForkJoin(poolSize).sort(array);
 
 			System.out.println(String.format("%f [msec]", (System.nanoTime() - start) / 1000000.0));
 			System.out.print("**********************************************");
@@ -27,8 +26,9 @@ public class QuickSortForkJoinTest {
 	}
 
 	public static void main(String[] args) {
-		int limit = 29;
-		runSort(limit);
+		int limit = 32;
+		int poolSize = 10000;
+		runSort(limit,poolSize);
 	}
 
 }

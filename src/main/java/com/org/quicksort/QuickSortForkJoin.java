@@ -25,7 +25,7 @@ public class QuickSortForkJoin {
 		@Override
 		protected void compute() {
 			// TODO Auto-generated method stub
-			if (high - low <= THRESHOLD) {
+			if (serialThresholdMet()) {
 				Arrays.sort(array, low, high);
 			} else {
 				int pivot = partition(array, low, high);
@@ -58,10 +58,15 @@ public class QuickSortForkJoin {
 			array[j] = temp;
 		}
 
+		private boolean serialThresholdMet() {
+			return high - low < 1000000000;
+		}
+
 	}
 
 	public QuickSortForkJoin(int parallelism) {
 		pool = new ForkJoinPool(parallelism);
+		
 	}
 
 	/**
