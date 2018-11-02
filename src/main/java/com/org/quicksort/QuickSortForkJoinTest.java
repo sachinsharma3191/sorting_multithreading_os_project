@@ -1,4 +1,4 @@
-package com.thread.quicksort;
+package com.org.quicksort;
 
 import java.util.Random;
 import java.util.concurrent.ForkJoinPool;

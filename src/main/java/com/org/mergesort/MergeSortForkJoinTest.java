@@ -1,8 +1,7 @@
-package com.thread.mergesort;
+package com.org.mergesort;
 
 import java.util.Random;
 
-import com.thread.quicksort.QuickSortForkJoin;
 
 public class MergeSortForkJoinTest {
 
@@ -18,7 +17,7 @@ public class MergeSortForkJoinTest {
 			System.out.println("**********************************************");
 			System.out.print("Sorting Time for " + power + " elements ");
 			long start = System.nanoTime();
-			new QuickSortForkJoin(poolSize).sort(array);
+			new MergeSortForkJoin(poolSize).sort(array);
 
 			System.out.println(String.format("%f [msec]", (System.nanoTime() - start) / 1000000.0));
 			System.out.print("**********************************************");

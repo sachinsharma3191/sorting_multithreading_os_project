@@ -1,4 +1,4 @@
-package com.thread.mergesort;
+package com.org.mergesort;
 
 import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
