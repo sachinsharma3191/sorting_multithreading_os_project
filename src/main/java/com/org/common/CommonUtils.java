@@ -1,7 +1,8 @@
 package com.org.common;
 
-public class CommonUtils<E> {
+import java.util.Arrays;
 
+public class CommonUtils {
 
 	public static <T> int[] convert(T[] nums) {
 		int counter = 0;
@@ -10,6 +11,16 @@ public class CommonUtils<E> {
 			array[counter++] = (int) num;
 		}
 		return array;
+	}
+
+	public static void printArray(int array[]) {
+		System.out.print(Arrays.toString(array));
+	}
+
+	public static void printArray(Integer[] a) {
+		// TODO Auto-generated method stub
+		System.out.print(Arrays.toString(a));
+		
 	}
 
 }

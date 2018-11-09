@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 
+import com.org.common.CommonUtils;
+
 /**
  * @author Taylor Carr
  * @version 1.0
@@ -40,11 +42,16 @@ public class ParallelMergeSortTest {
 				System.out.printf("%d Threads:\n", i);
 			}
 			for (long j = 0, k = SIZE; j < ROUNDS; ++j, k *= 2) {
+
 				a = createRandomArray(k);
 				// run the algorithm and time how long it takes to sort the elements
+				System.out.println("**********Unsorted Array*****************");
+				CommonUtils.printArray(a);
 				long startTime = System.currentTimeMillis();
 				ParallelMergeSort.sort(a, comp, availableThreads);
 				long endTime = System.currentTimeMillis();
+				System.out.println("**********Sorted Array*****************");
+				CommonUtils.printArray(a);
 
 				if (!isSorted(a, comp)) {
 					throw new RuntimeException("not sorted afterward: " + Arrays.toString(a));

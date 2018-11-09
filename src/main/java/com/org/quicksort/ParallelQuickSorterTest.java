@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 
+import com.org.common.CommonUtils;
+
 
 public class ParallelQuickSorterTest {
 
@@ -38,6 +40,9 @@ public class ParallelQuickSorterTest {
 			}
 			for (long j = 0, k = SIZE; j < ROUNDS; ++j, k *= 2) {
 				a = createRandomArray(k);
+				System.out.println("**********Unsorted Array*****************");
+				CommonUtils.printArray(a);
+				
 				// run the algorithm and time how long it takes to sort the elements
 				long startTime = System.currentTimeMillis();
 				ParallelQuickSort.sort(a, comp, availableThreads);
@@ -46,6 +51,12 @@ public class ParallelQuickSorterTest {
 				if (!isSorted(a, comp)) {
 					throw new RuntimeException("not sorted afterward: " + Arrays.toString(a));
 				}
+				
+				System.out.println("**********Sorted Array*****************");
+				CommonUtils.printArray(a);
+				
+				
+				
 
 				System.out.printf("%10d elements  =>  %6d ms \n", k, endTime - startTime);
 			}
