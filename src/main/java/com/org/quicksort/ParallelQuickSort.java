@@ -1,129 +1,171 @@
 package com.org.quicksort;
 
-import java.util.Comparator;
-
-import com.org.common.CommonUtils;
-
 /**
- * @author sachin
+ * This class defines a quicksort method which sorts an array of comparable objects in place using multiple threads to
+ * parallelize the sorting.
  *
+ * @author Kenneth Powers
  */
-public class ParallelQuickSort extends Thread {
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class ParallelQuickSort {
+	/**
+	 * Number of threads to use for sorting.
+	 */
+	private static final int N_THREADS = Runtime.getRuntime().availableProcessors();
 
 	/**
-	 * Sorts an array, using the quick sort algorithm.
-	 * 
-	 * @param <T>
-	 *
-	 * @param a
-	 *            the array to sort
-	 * @param comp
-	 *            the comparator to compare array elements
+	 * Multiple to use when determining when to fall back.
 	 */
-	public static <T> void sort(T[] a, Comparator<? super T> comp, long threads) {
-		parallelQuickSort(a, 0, a.length - 1, comp, threads);
+	private static final int FALLBACK = 2;
+
+	/**
+	 * Thread pool used for executing sorting Runnables.
+	 */
+	private static Executor pool = Executors.newFixedThreadPool(N_THREADS);
+
+	/**
+	 * Main method used for sorting from clients. Input is sorted in place using
+	 * multiple threads.
+	 *
+	 * @param input
+	 *            The array to sort.
+	 * @param <T>
+	 *            The type of the objects being sorted, must extend Comparable.
+	 */
+	public static <T extends Comparable<T>> void quicksort(T[] input) {
+		final AtomicInteger count = new AtomicInteger(1);
+		pool.execute(new QuicksortRunnable<T>(input, 0, input.length - 1, count));
+		try {
+			synchronized (count) {
+				count.wait();
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
-	private static <T> void parallelQuickSort(T[] a, int from, int to, Comparator<? super T> comp,
-			long availableThreads) {
-		if (from - to > 0) {
-			if (availableThreads <= 1) {
-				quickSort(CommonUtils.convert(a), from, to);
+	/**
+	 * Sorts a section of an array using quicksort. The method used is not
+	 * technically recursive as it just creates new runnables and hands them off to
+	 * the ThreadPoolExecutor.
+	 *
+	 * @param <T>
+	 *            The type of the objects being sorted, must extend Comparable.
+	 */
+	private static class QuicksortRunnable<T extends Comparable<T>> implements Runnable {
+		/**
+		 * The array being sorted.
+		 */
+		private final T[] values;
+		/**
+		 * The starting index of the section of the array to be sorted.
+		 */
+		private final int left;
+		/**
+		 * The ending index of the section of the array to be sorted.
+		 */
+		private final int right;
+		/**
+		 * The number of threads currently executing.
+		 */
+		private final AtomicInteger count;
+
+		/**
+		 * Default constructor. Sets up the runnable object for execution.
+		 *
+		 * @param values
+		 *            The array to sort.
+		 * @param left
+		 *            The starting index of the section of the array to be sorted.
+		 * @param right
+		 *            The ending index of the section of the array to be sorted.
+		 * @param count
+		 *            The number of currently executing threads.
+		 */
+		public QuicksortRunnable(T[] values, int left, int right, AtomicInteger count) {
+			this.values = values;
+			this.left = left;
+			this.right = right;
+			this.count = count;
+		}
+
+		/**
+		 * The thread's run logic. When this thread is done doing its stuff it checks to
+		 * see if all other threads are as well. If so, then we notify the count object
+		 * so Sorter.quicksort stops blocking.
+		 */
+		@Override
+		public void run() {
+			quicksort(left, right);
+			synchronized (count) {
+				// AtomicInteger.getAndDecrement() returns the old value. If the old value is 1,
+				// then we know that the actual value is 0.
+				if (count.getAndDecrement() == 1)
+					count.notify();
 			}
-		} else {
-			if (from < to) {
-				if (from < to) {
-					/*
-					 * pi is partitioning index, arr[pi] is now at right place
-					 */
-					int pivot = partition(CommonUtils.convert(a), from, to);
-					Thread firstHalf = new Thread() {
-						public void run() {
-							parallelQuickSort(a, from, pivot, comp, availableThreads - 1);
-						}
-					};
-					Thread secondHalf = new Thread() {
-						public void run() {
-							parallelQuickSort(a, pivot + 1, to, comp, availableThreads - 1);
-						}
-					};
+		}
 
-					firstHalf.start();
-					secondHalf.start();
-
-					try {
-						firstHalf.join();
-						secondHalf.join();
-					} catch (InterruptedException ie) {
-						ie.printStackTrace();
-					}
-
+		/**
+		 * Method which actually does the sorting. Falls back on recursion if there are
+		 * a certain number of queued / running tasks.
+		 *
+		 * @param pLeft
+		 *            The left index of the sub array to sort.
+		 * @param pRight
+		 *            The right index of the sub array to sort.
+		 */
+		private void quicksort(int pLeft, int pRight) {
+			if (pLeft < pRight) {
+				int storeIndex = partition(pLeft, pRight);
+				if (count.get() >= FALLBACK * N_THREADS) {
+					quicksort(pLeft, storeIndex - 1);
+					quicksort(storeIndex + 1, pRight);
+				} else {
+					count.getAndAdd(2);
+					pool.execute(new QuicksortRunnable<T>(values, pLeft, storeIndex - 1, count));
+					pool.execute(new QuicksortRunnable<T>(values, storeIndex + 1, pRight, count));
 				}
 			}
 		}
-	}
 
-	/**
-	 * @param arr
-	 * @param low
-	 * @param high
-	 */
-	static void quickSort(int arr[], int low, int high) {
-		if (low < high) {
-			/*
-			 * pi is partitioning index, arr[pi] is now at right place
-			 */
-			int pivot = partition(arr, low, high);
-
-			// Recursively sort elements before
-			// partition and after partition
-			quickSort(arr, low, pivot - 1);
-			quickSort(arr, pivot + 1, high);
-		}
-	}
-
-	/**
-	 * @param arr
-	 * @param low
-	 * @param high
-	 * @return
-	 */
-	static int partition(int arr[], int low, int high) {
-		int pivot = arr[high];
-		int i = (low - 1); // index of smaller element
-		for (int j = low; j < high; j++) {
-			// If current element is smaller than or
-			// equal to pivot
-			if (arr[j] <= pivot) {
-				i++;
-
-				// swap arr[i] and arr[j]
-				int temp = arr[i];
-				arr[i] = arr[j];
-				arr[j] = temp;
+		/**
+		 * Partitions the portion of the array between indexes left and right,
+		 * inclusively, by moving all elements less than values[pivotIndex] before the
+		 * pivot, and the equal or greater elements after it.
+		 *
+		 * @param pLeft
+		 * @param pRight
+		 * @return The final index of the pivot value.
+		 */
+		private int partition(int pLeft, int pRight) {
+			T pivotValue = values[pRight];
+			int storeIndex = pLeft;
+			for (int i = pLeft; i < pRight; i++) {
+				if (values[i].compareTo(pivotValue) < 0) {
+					swap(i, storeIndex);
+					storeIndex++;
+				}
 			}
+			swap(storeIndex, pRight);
+			return storeIndex;
 		}
 
-		// swap arr[i+1] and arr[high] (or pivot)
-		int temp = arr[i + 1];
-		arr[i + 1] = arr[high];
-		arr[high] = temp;
-
-		return i + 1;
+		/**
+		 * Simple swap method.
+		 *
+		 * @param left
+		 *            The index of the first value to swap with the second value.
+		 * @param right
+		 *            The index of the second value to swap with the first value.
+		 */
+		private void swap(int left, int right) {
+			T temp = values[left];
+			values[left] = values[right];
+			values[right] = temp;
+		}
 	}
-
-	/**
-	 * @param data
-	 * @param i
-	 * @param j
-	 */
-	void swap(int[] data, int i, int j) {
-		int tmp = data[i];
-		data[i] = data[j];
-		data[j] = tmp;
-	}
-	
-	
-	
-
 }

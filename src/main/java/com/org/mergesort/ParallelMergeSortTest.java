@@ -21,7 +21,7 @@ public class ParallelMergeSortTest {
 	 * the array afterwards to ensure correct sorting
 	 */
 	public static void runSortTester() {
-		long SIZE = 100000000L, // initial length of array to sort
+		long SIZE = 1000000L, // initial length of array to sort
 				ROUNDS = 2, availableThreads = (Runtime.getRuntime().availableProcessors()) * 2;
 
 		System.out.println(Runtime.getRuntime().availableProcessors());
@@ -45,13 +45,13 @@ public class ParallelMergeSortTest {
 
 				a = createRandomArray(k);
 				// run the algorithm and time how long it takes to sort the elements
-				System.out.println("**********Unsorted Array*****************");
-				CommonUtils.printArray(a);
+				//System.out.println("**********Unsorted Array*****************");
+				//CommonUtils.printArray(a);
 				long startTime = System.currentTimeMillis();
 				ParallelMergeSort.sort(a, comp, availableThreads);
 				long endTime = System.currentTimeMillis();
-				System.out.println("**********Sorted Array*****************");
-				CommonUtils.printArray(a);
+				//System.out.println("**********Sorted Array*****************");
+				//CommonUtils.printArray(a);
 
 				if (!isSorted(a, comp)) {
 					throw new RuntimeException("not sorted afterward: " + Arrays.toString(a));
@@ -106,7 +106,7 @@ public class ParallelMergeSortTest {
 		Integer[] a = new Integer[(int) length];
 		Random rand = new Random(System.currentTimeMillis());
 		for (int i = 0; i < a.length; i++) {
-			a[i] = rand.nextInt(1000000);
+			a[i] = rand.nextInt(CommonUtils.MAX_LIMIT);
 		}
 		return a;
 	}

@@ -14,16 +14,16 @@ public class MergeSortForkJoinTest {
 			Random random = new Random(limit);
 			int[] array = new int[power];
 			for (int j = 0; j < power; ++j) {
-				array[j] = random.nextInt();
+				array[j] = random.nextInt(CommonUtils.MAX_LIMIT);
 			}
-			System.out.println("**********Unsorted Array*****************");
-			CommonUtils.printArray(array);
+			//System.out.println("**********Unsorted Array*****************");
+			//CommonUtils.printArray(array);
 			System.out.println("**********************************************");
 			System.out.print("Sorting Time for " + power + " elements ");
 			long start = System.nanoTime();
 			new MergeSortForkJoin(poolSize).sort(array);
-			System.out.println("**********Sorted Array*****************");
-			CommonUtils.printArray(array);
+			///System.out.println("**********Sorted Array*****************");
+			//CommonUtils.printArray(array);
 			
 
 			System.out.println(String.format("%f [msec]", (System.nanoTime() - start) / 1000000.0));

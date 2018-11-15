@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 public class CommonUtils {
 
+	public static final int MAX_LIMIT  = 10000;
+	
 	public static <T> int[] convert(T[] nums) {
 		int counter = 0;
 		int array[] = new int[nums.length];
