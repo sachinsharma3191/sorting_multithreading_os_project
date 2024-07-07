@@ -1,5 +1,4 @@
 # OS Multithreading Sorting Project 
 
-### A Application for comparison of Sorting Algorithms(Merge and Quick) in Multithreading Environment.The program is written in Java
-### Two programs have been used to bench mark the sorting .We have utilized Simple Thread and Fork Join Pool to benchmark the performance of sorting algorthims
-### The Fork Join process run faster than simple thread and sorts 2 ^32 elements in 10 seconds.
+##  Benchmarking Sorting Algorithms (Merge/Quick Sort) Performance in a Multithreading Environment Using Two Java Programs
+We have used two programs to benchmark sorting performance: Simple Thread and Fork Join Pool. The Fork Join Pool process runs faster than the Simple Thread, sorting 2^32 elements in just 10 seconds.
